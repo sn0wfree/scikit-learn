@@ -1,7 +1,6 @@
 """
 Testing Recursive feature elimination
 """
-import warnings
 import numpy as np
 from numpy.testing import assert_array_almost_equal, assert_array_equal
 from nose.tools import assert_equal, assert_true
@@ -16,7 +15,6 @@ from sklearn.model_selection import cross_val_score
 
 from sklearn.utils import check_random_state
 from sklearn.utils.testing import ignore_warnings
-from sklearn.utils.testing import assert_warns_message
 from sklearn.utils.testing import assert_greater
 
 from sklearn.metrics import make_scorer
@@ -179,6 +177,13 @@ def test_rfecv():
     assert_array_equal(X_r, iris.data)
 
     rfecv_sparse = RFECV(estimator=SVC(kernel="linear"), step=2, cv=5)
+    X_sparse = sparse.csr_matrix(X)
+    rfecv_sparse.fit(X_sparse, y)
+    X_r_sparse = rfecv_sparse.transform(X_sparse)
+    assert_array_equal(X_r_sparse.toarray(), iris.data)
+
+    # Verifying that steps < 1 don't blow up.
+    rfecv_sparse = RFECV(estimator=SVC(kernel="linear"), step=.2, cv=5)
     X_sparse = sparse.csr_matrix(X)
     rfecv_sparse.fit(X_sparse, y)
     X_r_sparse = rfecv_sparse.transform(X_sparse)

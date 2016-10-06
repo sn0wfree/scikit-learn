@@ -19,6 +19,8 @@ from .bagging import BaseBagging
 
 __all__ = ["IsolationForest"]
 
+INTEGER_TYPES = (numbers.Integral, np.integer)
+
 
 class IsolationForest(BaseBagging):
     """Isolation Forest Algorithm
@@ -42,6 +44,8 @@ class IsolationForest(BaseBagging):
 
     Read more in the :ref:`User Guide <isolation_forest>`.
 
+    .. versionadded:: 0.18
+
     Parameters
     ----------
     n_estimators : int, optional (default=100)
@@ -62,11 +66,14 @@ class IsolationForest(BaseBagging):
 
     max_features : int or float, optional (default=1.0)
         The number of features to draw from X to train each base estimator.
+
             - If int, then draw `max_features` features.
             - If float, then draw `max_features * X.shape[1]` features.
 
     bootstrap : boolean, optional (default=False)
-        Whether samples are drawn with replacement.
+        If True, individual trees are fit on random subsets of the training
+        data sampled with replacement. If False, sampling without replacement
+        is performed.
 
     n_jobs : integer, optional (default=1)
         The number of jobs to run in parallel for both `fit` and `predict`.
@@ -101,6 +108,7 @@ class IsolationForest(BaseBagging):
     .. [2] Liu, Fei Tony, Ting, Kai Ming and Zhou, Zhi-Hua. "Isolation-based
            anomaly detection." ACM Transactions on Knowledge Discovery from
            Data (TKDD) 6.1 (2012): 3.
+
     """
 
     def __init__(self,
@@ -168,7 +176,7 @@ class IsolationForest(BaseBagging):
                                  'Valid choices are: "auto", int or'
                                  'float' % self.max_samples)
 
-        elif isinstance(self.max_samples, numbers.Integral):
+        elif isinstance(self.max_samples, INTEGER_TYPES):
             if self.max_samples > n_samples:
                 warn("max_samples (%s) is greater than the "
                      "total number of samples (%s). max_samples "
@@ -179,7 +187,8 @@ class IsolationForest(BaseBagging):
                 max_samples = self.max_samples
         else:  # float
             if not (0. < self.max_samples <= 1.):
-                raise ValueError("max_samples must be in (0, 1]")
+                raise ValueError("max_samples must be in (0, 1], got %r"
+                                 % self.max_samples)
             max_samples = int(self.max_samples * X.shape[0])
 
         self.max_samples_ = max_samples
@@ -278,7 +287,7 @@ def _average_path_length(n_samples_leaf):
     average_path_length : array, same shape as n_samples_leaf
 
     """
-    if isinstance(n_samples_leaf, numbers.Integral):
+    if isinstance(n_samples_leaf, INTEGER_TYPES):
         if n_samples_leaf <= 1:
             return 1.
         else:
