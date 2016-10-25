@@ -19,6 +19,11 @@ New features
 Enhancements
 ............
 
+   - Added ``classes_`` attribute to :class:`model_selection.GridSearchCV`
+     that matches the ``classes_`` attribute of ``best_estimator_``. (`#7661
+     <https://github.com/scikit-learn/scikit-learn/pull/7661>`_) by `Alyssa
+     Batula`_ and `Dylan Werner-Meier`_.
+
    - The ``min_weight_fraction_leaf`` constraint in tree construction is now
      more efficient, taking a fast path to declare a node a leaf if its weight
      is less than 2 * the minimum. Note that the constructed tree will be
@@ -46,6 +51,9 @@ Enhancements
      :func:`model_selection.learning_curve`.
      (`#7506` <https://github.com/scikit-learn/scikit-learn/pull/7506>_) by
      `Narine Kokhlikyan`_.
+
+   - Added ``norm_order`` parameter to :class:`feature_selection.SelectFromModel`
+     to enable selection of the norm order when ``coef_`` is more than 1D
 
 Bug fixes
 .........
@@ -90,7 +98,11 @@ Bug fixes
      `#6497 <https://github.com/scikit-learn/scikit-learn/pull/6497>`_
      by `Sebastian Säger`_
 
-
+   - Fixes issue in :ref:`univariate_feature_selection` where score 
+     functions were not accepting multi-label targets.(`#7676
+     <https://github.com/scikit-learn/scikit-learn/pull/7676>`_)
+     by `Mohammed Affan`_
+     
 .. _changes_0_18:
 
 Version 0.18
@@ -4881,3 +4893,7 @@ David Huard, Dave Morrill, Ed Schofield, Travis Oliphant, Pearu Peterson.
 .. _Narine Kokhlikyan: https://github.com/NarineK
 
 .. _Peng Meng: https://github.com/mpjlu
+
+.. _Dylan Werner-Meier: https://github.com/unautre
+
+.. _Alyssa Batula: https://github.com/abatula
